@@ -1,0 +1,25 @@
+metric,value
+Longitude zeta2 - all rainfall,0.3356588254425475
+Longitude zeta2 - extreme rainfall,0.4431413683051904
+Longitude absolute change,0.10748254286264292
+Longitude percentage change,32.021366553056716
+Latitude zeta2 - all rainfall,0.28112162309838545
+Latitude zeta2 - extreme rainfall,0.3740626271408344
+Latitude absolute change,0.09294100404244893
+Latitude percentage change,33.06078095953577
+Directional difference - all rainfall,0.05453720234416204
+Directional difference - extreme rainfall,0.06907874116435608
+Directional difference absolute change,0.014541538820194044
+Longitude years extreme > all,20.0
+Latitude years extreme > all,20.0
+Difference years extreme > all,14.0
+Longitude paired t statistic,13.954271973157539
+Longitude paired p value,1.9483568656438613e-11
+Latitude paired t statistic,10.625155018515217
+Latitude paired p value,1.964411290129457e-09
+Directional difference paired t statistic,1.687467292565882
+Directional difference paired p value,0.10786194288789067
+Longitude Pearson r,0.8335835290772158
+Longitude correlation p value,4.9968079239762955e-06
+Latitude Pearson r,0.59625408774802
+Latitude correlation p value,0.005524959207468729
