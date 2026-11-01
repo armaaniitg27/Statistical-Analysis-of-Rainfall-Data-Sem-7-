@@ -1,0 +1,2 @@
+year,extreme_percentile,extreme_threshold,extreme_time_steps,extreme_percentage,all_L_lon_km,all_L_lat_km,all_anisotropy,extreme_L_lon_km,extreme_L_lat_km,extreme_anisotropy,extreme_to_all_L_lon,extreme_to_all_L_lat
+2005,95,1.2745026,442,5.004528985507246,75.92183690609865,62.991510920320074,1.20527092931831,90.58254948826297,80.2232600181598,1.1291307467155807,1.1931027116782873,1.2735566879739828
