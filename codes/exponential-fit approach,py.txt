@@ -1,0 +1,85 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+from sklearn.metrics import r2_score, mean_squared_error
+year = 2005
+longitude_file = 'D:\\SBS project\\sem 7\\spatial_correlation_longitude_2005.csv'
+latitude_file = 'D:\\SBS project\\sem 7\\spatial_correlation_latitude_2005.csv'
+plot_folder = 'D:\\SBS project\\sem 7\\chapter1\\plots'
+code_folder = 'D:\\SBS project\\sem 7\\chapter1\\codes'
+e_threshold = 1 / np.e
+lon_df = pd.read_csv(longitude_file)
+lat_df = pd.read_csv(latitude_file)
+
+def exponential_model(distance, A, L):
+    return A * np.exp(-distance / L)
+
+def fit_exponential(distance, correlation):
+    distance = np.asarray(distance, dtype=float)
+    correlation = np.asarray(correlation, dtype=float)
+    initial_A = correlation[0]
+    initial_L = 70.0
+    parameters, covariance = curve_fit(exponential_model, distance, correlation, p0=[initial_A, initial_L], bounds=([0, 0], [2, np.inf]), maxfev=10000)
+    A_fit, L_fit = parameters
+    predicted = exponential_model(distance, A_fit, L_fit)
+    r2 = r2_score(correlation, predicted)
+    rmse = np.sqrt(mean_squared_error(correlation, predicted))
+    return (A_fit, L_fit, predicted, r2, rmse)
+lon_distance = lon_df['distance_km'].values
+lon_correlation = lon_df['mean_correlation'].values
+lon_A, lon_L, lon_predicted, lon_r2, lon_rmse = fit_exponential(lon_distance, lon_correlation)
+lat_distance = lat_df['distance_km'].values
+lat_correlation = lat_df['mean_correlation'].values
+lat_A, lat_L, lat_predicted, lat_r2, lat_rmse = fit_exponential(lat_distance, lat_correlation)
+lon_threshold = lon_A / np.e
+lat_threshold = lat_A / np.e
+lon_smooth = np.linspace(0, lon_distance.max(), 500)
+lat_smooth = np.linspace(0, lat_distance.max(), 500)
+lon_fit_smooth = exponential_model(lon_smooth, lon_A, lon_L)
+lat_fit_smooth = exponential_model(lat_smooth, lat_A, lat_L)
+plt.figure(figsize=(10, 6))
+plt.scatter(lon_distance, lon_correlation, label='Observed mean correlation')
+plt.plot(lon_smooth, lon_fit_smooth, linewidth=2, label=f'Exponential fit: L = {lon_L:.2f} km')
+plt.axhline(lon_threshold, linestyle='--', label='A/e')
+plt.axvline(lon_L, linestyle=':', label=f'Correlation length = {lon_L:.2f} km')
+plt.xlabel('Spatial Separation (km)')
+plt.ylabel('Mean Pearson Correlation')
+plt.title(f'Longitudinal Spatial Correlation — {year}')
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.tight_layout()
+lon_plot = f'{plot_folder}\\longitude_exponential_fit_{year}.png'
+plt.savefig(lon_plot, dpi=300)
+plt.show()
+plt.figure(figsize=(10, 6))
+plt.scatter(lat_distance, lat_correlation, label='Observed mean correlation')
+plt.plot(lat_smooth, lat_fit_smooth, linewidth=2, label=f'Exponential fit: L = {lat_L:.2f} km')
+plt.axhline(lat_threshold, linestyle='--', label='A/e')
+plt.axvline(lat_L, linestyle=':', label=f'Correlation length = {lat_L:.2f} km')
+plt.xlabel('Spatial Separation (km)')
+plt.ylabel('Mean Pearson Correlation')
+plt.title(f'Latitudinal Spatial Correlation — {year}')
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.tight_layout()
+lat_plot = f'{plot_folder}\\latitude_exponential_fit_{year}.png'
+plt.savefig(lat_plot, dpi=300)
+plt.show()
+plt.figure(figsize=(10, 6))
+plt.scatter(lon_distance, lon_correlation, s=20, label='Longitude observed')
+plt.plot(lon_smooth, lon_fit_smooth, linewidth=2, label=f'Longitude fit (L = {lon_L:.2f} km)')
+plt.scatter(lat_distance, lat_correlation, s=20, label='Latitude observed')
+plt.plot(lat_smooth, lat_fit_smooth, linewidth=2, label=f'Latitude fit (L = {lat_L:.2f} km)')
+plt.xlabel('Spatial Separation (km)')
+plt.ylabel('Mean Pearson Correlation')
+plt.title(f'Spatial Correlation Comparison — {year}')
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.tight_layout()
+comparison_plot = f'{plot_folder}\\spatial_correlation_exponential_comparison_{year}.png'
+plt.savefig(comparison_plot, dpi=300)
+plt.show()
+results = pd.DataFrame({'year': [year], 'longitude_A': [lon_A], 'longitude_correlation_length_km': [lon_L], 'longitude_R2': [lon_r2], 'longitude_RMSE': [lon_rmse], 'latitude_A': [lat_A], 'latitude_correlation_length_km': [lat_L], 'latitude_R2': [lat_r2], 'latitude_RMSE': [lat_rmse]})
+results_file = f'{plot_folder}\\exponential_correlation_length_{year}.csv'
+results.to_csv(results_file, index=False)
